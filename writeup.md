@@ -156,7 +156,7 @@ library(randomForest)
 
 ```r
 trControl <- trainControl(method = "cv", number = 2)
-modFit <- train(classe ~ ., data = training, method= " rf", prox = TRUE, trControl = trControl))
+modFit <- train(classe ~ ., data = training, method= " rf", prox = TRUE, trControl = trControl)
 ```
 
 

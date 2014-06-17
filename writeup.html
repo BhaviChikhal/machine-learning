@@ -306,7 +306,7 @@ nrow(crossval)
 </code></pre>
 
 <pre><code class="r">trControl &lt;- trainControl(method = &quot;cv&quot;, number = 2)
-modFit &lt;- train(classe ~ ., data = training, method= &quot; rf&quot;, prox = TRUE, trControl = trControl))
+modFit &lt;- train(classe ~ ., data = training, method= &quot; rf&quot;, prox = TRUE, trControl = trControl)
 </code></pre>
 
 <h4>Evaluate the model (out-of-sample error)</h4>

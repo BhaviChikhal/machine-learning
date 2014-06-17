@@ -1,3 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
+pml-training.csv
+pml-testing.csv
+finalModel.rds

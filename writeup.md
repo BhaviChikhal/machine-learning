@@ -1,4 +1,4 @@
-Practical machine learning - Course project
+Practical machine learning --nae Course project
 ===========================================
 
 The goal of the project
@@ -18,7 +18,7 @@ The training of the model
 
 In the following, I describe the steps concerning the training of a predictive model.
 
-#### Read the data
+### Read the data
 
 First, the `.csv` file contain the training data is read into R. Here, unavailable values are set as `NA`.
 
@@ -27,7 +27,7 @@ First, the `.csv` file contain the training data is read into R. Here, unavailab
 rawData <- read.csv("pml-training.csv", na.strings = c("NA", ""))
 ```
 
-#### Reduce the dataset
+### Reduce the dataset
 
 In the next step, I check the proportion of missing values (`NA`s) in the columns.
 
@@ -47,7 +47,7 @@ There are 100 columns in which almost all values (97.93%) are missing. If a colu
 
 
 ```r
-# index of columns with many NA values
+# index of columns with NA values
 idx <- !propNAs
 # check
 sum(idx)
@@ -70,13 +70,13 @@ ncol(rawDataReduced)
 
 There are further unnecessary columns that can be removed. The column `X` contains the row numbers. The column `user_name` contains the name of the user. Of course, these variables cannot be a predictor for the type of exercise.
 
-Furthermore, the three columns containing time stamps (`raw_timestamp_part_1`, `raw_timestamp_part_1`, and `cvtd_timestamp`) will not be used.
+Furthermore, the three columns containing time stamps (`raw_timestamp_part_1`, `raw_timestamp_part_2`, and `cvtd_timestamp`) will not be used.
 
 The factors `new_window` and `num_window` are not related to sensor data. They will be removed too.
 
 
 ```r
-# find columns not containing sensor measurment data
+# find columns not containing sensor measurement data
 idx <- grep("^X$|user_name|timestamp|window", names(rawDataReduced))
 # check
 length(idx)
@@ -92,7 +92,7 @@ rawDataReduced2 <- rawDataReduced[-idx]
 ```
 
 
-#### Preparing the data for training
+### Preparing the data for training
 
 Now, the dataset contains one outcome column (`classe`) and 59 feature columns. The function `createDataPartition` of the `caret` package is used to split the data into a training and a cross-validation data set. Here, 70% of the data goes into the training set.
 
@@ -135,7 +135,7 @@ nrow(crossval)
 ```
 
 
-#### Train a model
+### Train a model
 
 I used the *random-forest* technique to generate a predictive model. In sum, 10 models were trained. I played around with the parameters passed to `trControl` and specified different models with bootstrapping (`method = "boot"`) and cross-validation (`method = "cv"`).
 
@@ -156,13 +156,13 @@ library(randomForest)
 
 ```r
 trControl <- trainControl(method = "cv", number = 2)
-modFit <- train(classe ~ ., data = training, method= " rf", prox = TRUE, trControl = trControl)
+modFit <- train(classe ~ ., data = training, method = "rf", prox = TRUE, trControl = trControl)
 ```
 
 
 
 
-#### Evaluate the model (out-of-sample error)
+### Evaluate the model (out-of-sample error)
 
 First, the final model is used to predict the outcome in the cross-validation dataset.
 
@@ -188,6 +188,25 @@ acc
 The accuracy of the prediction is 99.17%. Hence, the *out-of-sample error* is 0.83%.
 
 
+### Variable importance
+
+The five most important variables in the model and their relative importance values are:
+
+
+```r
+vi <- varImp(modFit)$importance
+vi[head(order(unlist(vi), decreasing = TRUE), 5L), , drop = FALSE]
+```
+
+```
+##                   Overall
+## roll_belt          100.00
+## yaw_belt            86.14
+## magnet_dumbbell_z   72.94
+## magnet_dumbbell_y   68.95
+## pitch_belt          62.11
+```
+
 ***************************************************************************
 
 #### The source of the data
@@ -195,5 +214,3 @@ The accuracy of the prediction is 99.17%. Hence, the *out-of-sample error* is 0.
 The assignment is based on data of weight lifting exercises. It has been published:
 
 Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises]( http://groupware.les.inf.puc-rio.br/har#ixzz34irPKNuZ). *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
-
-The training dataset can be downloaded [here](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv). The testing dataset can be downloaded [here](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv). 

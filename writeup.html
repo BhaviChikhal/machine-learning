@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="x-ua-compatible" content="IE=9" >
 
-<title>Practical machine learning - Course project</title>
+<title>Practical machine learning &ndash;nae Course project</title>
 
 <style type="text/css">
 body, td {
@@ -179,7 +179,7 @@ hljs.initHighlightingOnLoad();
 </head>
 
 <body>
-<h1>Practical machine learning - Course project</h1>
+<h1>Practical machine learning &ndash;nae Course project</h1>
 
 <h2>The goal of the project</h2>
 
@@ -199,14 +199,14 @@ hljs.initHighlightingOnLoad();
 
 <p>In the following, I describe the steps concerning the training of a predictive model.</p>
 
-<h4>Read the data</h4>
+<h3>Read the data</h3>
 
 <p>First, the <code>.csv</code> file contain the training data is read into R. Here, unavailable values are set as <code>NA</code>.</p>
 
 <pre><code class="r">rawData &lt;- read.csv(&quot;pml-training.csv&quot;, na.strings = c(&quot;NA&quot;, &quot;&quot;))
 </code></pre>
 
-<h4>Reduce the dataset</h4>
+<h3>Reduce the dataset</h3>
 
 <p>In the next step, I check the proportion of missing values (<code>NA</code>s) in the columns.</p>
 
@@ -221,7 +221,7 @@ table(propNAs)
 
 <p>There are 100 columns in which almost all values (97.93%) are missing. If a column contains a large number of <code>NA</code>s, it will not be of great use for training the model. Hence, these columns will be removed. Only the columns without any <code>NA</code>s will be kept.</p>
 
-<pre><code class="r"># index of columns with many NA values
+<pre><code class="r"># index of columns with NA values
 idx &lt;- !propNAs
 # check
 sum(idx)
@@ -241,11 +241,11 @@ ncol(rawDataReduced)
 
 <p>There are further unnecessary columns that can be removed. The column <code>X</code> contains the row numbers. The column <code>user_name</code> contains the name of the user. Of course, these variables cannot be a predictor for the type of exercise.</p>
 
-<p>Furthermore, the three columns containing time stamps (<code>raw_timestamp_part_1</code>, <code>raw_timestamp_part_1</code>, and <code>cvtd_timestamp</code>) will not be used.</p>
+<p>Furthermore, the three columns containing time stamps (<code>raw_timestamp_part_1</code>, <code>raw_timestamp_part_2</code>, and <code>cvtd_timestamp</code>) will not be used.</p>
 
 <p>The factors <code>new_window</code> and <code>num_window</code> are not related to sensor data. They will be removed too.</p>
 
-<pre><code class="r"># find columns not containing sensor measurment data
+<pre><code class="r"># find columns not containing sensor measurement data
 idx &lt;- grep(&quot;^X$|user_name|timestamp|window&quot;, names(rawDataReduced))
 # check
 length(idx)
@@ -258,7 +258,7 @@ length(idx)
 rawDataReduced2 &lt;- rawDataReduced[-idx]
 </code></pre>
 
-<h4>Preparing the data for training</h4>
+<h3>Preparing the data for training</h3>
 
 <p>Now, the dataset contains one outcome column (<code>classe</code>) and 59 feature columns. The function <code>createDataPartition</code> of the <code>caret</code> package is used to split the data into a training and a cross-validation data set. Here, 70% of the data goes into the training set.</p>
 
@@ -290,7 +290,7 @@ nrow(crossval)
 <pre><code>## [1] 5885
 </code></pre>
 
-<h4>Train a model</h4>
+<h3>Train a model</h3>
 
 <p>I used the <em>random-forest</em> technique to generate a predictive model. In sum, 10 models were trained. I played around with the parameters passed to <code>trControl</code> and specified different models with bootstrapping (<code>method = &quot;boot&quot;</code>) and cross-validation (<code>method = &quot;cv&quot;</code>).</p>
 
@@ -306,10 +306,10 @@ nrow(crossval)
 </code></pre>
 
 <pre><code class="r">trControl &lt;- trainControl(method = &quot;cv&quot;, number = 2)
-modFit &lt;- train(classe ~ ., data = training, method= &quot; rf&quot;, prox = TRUE, trControl = trControl)
+modFit &lt;- train(classe ~ ., data = training, method = &quot;rf&quot;, prox = TRUE, trControl = trControl)
 </code></pre>
 
-<h4>Evaluate the model (out-of-sample error)</h4>
+<h3>Evaluate the model (out-of-sample error)</h3>
 
 <p>First, the final model is used to predict the outcome in the cross-validation dataset.</p>
 
@@ -329,6 +329,22 @@ acc
 
 <p>The accuracy of the prediction is 99.17%. Hence, the <em>out-of-sample error</em> is 0.83%.</p>
 
+<h3>Variable importance</h3>
+
+<p>The five most important variables in the model and their relative importance values are:</p>
+
+<pre><code class="r">vi &lt;- varImp(modFit)$importance
+vi[head(order(unlist(vi), decreasing = TRUE), 5L), , drop = FALSE]
+</code></pre>
+
+<pre><code>##                   Overall
+## roll_belt          100.00
+## yaw_belt            86.14
+## magnet_dumbbell_z   72.94
+## magnet_dumbbell_y   68.95
+## pitch_belt          62.11
+</code></pre>
+
 <hr/>
 
 <h4>The source of the data</h4>
@@ -336,8 +352,6 @@ acc
 <p>The assignment is based on data of weight lifting exercises. It has been published:</p>
 
 <p>Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. <a href="http://groupware.les.inf.puc-rio.br/har#ixzz34irPKNuZ">Qualitative Activity Recognition of Weight Lifting Exercises</a>. <em>Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human &#39;13)</em>. Stuttgart, Germany: ACM SIGCHI, 2013.</p>
-
-<p>The training dataset can be downloaded <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv">here</a>. The testing dataset can be downloaded <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv">here</a>. </p>
 
 </body>
 

@@ -1,4 +1,4 @@
-Practical machine learning --nae Course project
+Practical machine learning: Course project
 ===========================================
 
 The goal of the project

@@ -4,3 +4,4 @@
 pml-training.csv
 pml-testing.csv
 finalModel.rds
+*cache

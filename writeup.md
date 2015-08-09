@@ -1,5 +1,8 @@
-Practical machine learning: Course project
+Practical Machine Learning: Course project
 ===========================================
+
+
+
 
 The goal of the project
 -----------------------
@@ -68,7 +71,7 @@ ncol(rawDataReduced)
 ## [1] 60
 ```
 
-There are further unnecessary columns that can be removed. The column `X` contains the row numbers. The column `user_name` contains the name of the user. Of course, these variables cannot be a predictor for the type of exercise.
+There are further unnecessary columns that can be removed. The column `X` contains the row numbers. The column `user_name` contains the name of the user. Of course, these variables cannot predictors for the type of exercise.
 
 Furthermore, the three columns containing time stamps (`raw_timestamp_part_1`, `raw_timestamp_part_2`, and `cvtd_timestamp`) will not be used.
 
@@ -101,15 +104,9 @@ Now, the dataset contains one outcome column (`classe`) and 59 feature columns. 
 library(caret)
 ```
 
-```
-## Loading required package: lattice
-## Loading required package: ggplot2
-```
-
 ```r
 inTrain <- createDataPartition(y = rawDataReduced2$classe, p = 0.7, list = FALSE)
 ```
-
 
 The index `inTrain` is used to split the data.
 
@@ -148,19 +145,11 @@ Due to the similar performance, I will present the model with the shortest train
 library(randomForest)
 ```
 
-```
-## randomForest 4.6-7
-## Type rfNews() to see new features/changes/bug fixes.
-```
-
 
 ```r
 trControl <- trainControl(method = "cv", number = 2)
 modFit <- train(classe ~ ., data = training, method = "rf", prox = TRUE, trControl = trControl)
 ```
-
-
-
 
 ### Evaluate the model (out-of-sample error)
 
@@ -181,11 +170,11 @@ acc
 ```
 
 ```
-## Accuracy 
-##   0.9917
+##  Accuracy 
+## 0.9923534
 ```
 
-The accuracy of the prediction is 99.17%. Hence, the *out-of-sample error* is 0.83%.
+The accuracy of the prediction is 99.24%. Hence, the *out-of-sample error* is 0.76%.
 
 
 ### Variable importance
@@ -199,12 +188,12 @@ vi[head(order(unlist(vi), decreasing = TRUE), 5L), , drop = FALSE]
 ```
 
 ```
-##                   Overall
-## roll_belt          100.00
-## yaw_belt            86.14
-## magnet_dumbbell_z   72.94
-## magnet_dumbbell_y   68.95
-## pitch_belt          62.11
+##                     Overall
+## roll_belt         100.00000
+## pitch_forearm      60.51577
+## yaw_belt           51.70924
+## magnet_dumbbell_y  46.05269
+## magnet_dumbbell_z  44.17784
 ```
 
 ***************************************************************************
@@ -213,4 +202,4 @@ vi[head(order(unlist(vi), decreasing = TRUE), 5L), , drop = FALSE]
 
 The assignment is based on data of weight lifting exercises. It has been published:
 
-Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises]( http://groupware.les.inf.puc-rio.br/har#ixzz34irPKNuZ). *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises](http://groupware.les.inf.puc-rio.br/har#ixzz34irPKNuZ). *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.

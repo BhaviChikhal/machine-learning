@@ -1,5 +1,12 @@
-Practical machine learning: Course project
+Practical Machine Learning: Course project
 ===========================================
+
+```{r preliminaries, include=FALSE, cache=FALSE}
+library(knitr)
+opts_chunk$set(cache=TRUE)
+set.seed(1)
+```
+
 
 The goal of the project
 -----------------------
@@ -48,7 +55,7 @@ rawDataReduced <- rawData[idx]
 ncol(rawDataReduced)
 ```
 
-There are further unnecessary columns that can be removed. The column `X` contains the row numbers. The column `user_name` contains the name of the user. Of course, these variables cannot be a predictor for the type of exercise.
+There are further unnecessary columns that can be removed. The column `X` contains the row numbers. The column `user_name` contains the name of the user. Of course, these variables cannot predictors for the type of exercise.
 
 Furthermore, the three columns containing time stamps (`raw_timestamp_part_1`, `raw_timestamp_part_2`, and `cvtd_timestamp`) will not be used.
 
@@ -68,14 +75,11 @@ rawDataReduced2 <- rawDataReduced[-idx]
 
 Now, the dataset contains one outcome column (`classe`) and `r ncol(rawDataReduced) - 1L` feature columns. The function `createDataPartition` of the `caret` package is used to split the data into a training and a cross-validation data set. Here, 70% of the data goes into the training set.
 
-```{r data partition}
+```{r data partition, message=FALSE}
 library(caret)
 ```
-```{r createDataPartition, eval = FALSE}
+```{r createDataPartition}
 inTrain <- createDataPartition(y = rawDataReduced2$classe, p = 0.7, list = FALSE)
-```
-```{r load inTrain, echo = FALSE}
-inTrain <- readRDS("inTrain.rds")
 ```
 
 The index `inTrain` is used to split the data.
@@ -98,19 +102,14 @@ It took more than one day to train all models. Afterwards I tested their perform
 
 Due to the similar performance, I will present the model with the shortest training time.
 
-```{r load randomForest package}
+```{r load randomForest package, message=FALSE}
 library(randomForest)
 ```
 
-```{r train model, eval = FALSE}
+```{r train model}
 trControl <- trainControl(method = "cv", number = 2)
 modFit <- train(classe ~ ., data = training, method = "rf", prox = TRUE, trControl = trControl)
 ```
-
-```{r load model, echo = FALSE}
-modFit <- readRDS("finalModel.rds")
-```
-
 
 ### Evaluate the model (out-of-sample error)
 
@@ -146,4 +145,4 @@ vi[head(order(unlist(vi), decreasing = TRUE), 5L), , drop = FALSE]
 
 The assignment is based on data of weight lifting exercises. It has been published:
 
-Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises]( http://groupware.les.inf.puc-rio.br/har#ixzz34irPKNuZ). *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises](http://groupware.les.inf.puc-rio.br/har#ixzz34irPKNuZ). *Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13)*. Stuttgart, Germany: ACM SIGCHI, 2013.
